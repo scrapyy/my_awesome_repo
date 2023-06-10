@@ -254,3 +254,45 @@ resource "aws_eks_node_group" "private-nodes" {
   ]
 }
 
+######### ALB Controller
+
+# OIDC provider
+data "tls_certificate" "cert" {
+  url = aws_eks_cluster.eks-cluster.identity.0.oidc.0.issuer
+}
+
+resource "aws_iam_openid_connect_provider" "cluster" {
+  client_id_list  = ["sts.amazonaws.com"]
+  thumbprint_list = [data.tls_certificate.cert.certificates[0].sha1_fingerprint]
+  url             = aws_eks_cluster.eks-cluster.identity.0.oidc.0.issuer
+}
+
+data "aws_eks_cluster_auth" "cluster" {
+  name = aws_eks_cluster.eks-cluster.id
+}
+
+provider "kubernetes" {
+  host                   = aws_eks_cluster.eks-cluster.endpoint
+  cluster_ca_certificate = base64decode(aws_eks_cluster.eks-cluster.certificate_authority[0].data)
+  token                  = data.aws_eks_cluster_auth.cluster.token
+}
+
+provider "helm" {
+  kubernetes {
+    host                   = aws_eks_cluster.eks-cluster.endpoint
+    cluster_ca_certificate = base64decode(aws_eks_cluster.eks-cluster.certificate_authority[0].data)
+    token                  = data.aws_eks_cluster_auth.cluster.token
+  }
+}
+
+module "eks-alb-ingress" {
+  source  = "lablabs/eks-alb-ingress/aws"
+  version = "0.6.0"
+  cluster_identity_oidc_issuer = aws_iam_openid_connect_provider.cluster.id
+  cluster_identity_oidc_issuer_arn = aws_iam_openid_connect_provider.cluster.arn
+  cluster_name = aws_eks_cluster.eks-cluster.name
+  enabled = "true"
+  helm_chart_version = "1.5.3"
+  helm_repo_url = "https://aws.github.io/eks-charts"
+  helm_chart_name = "aws-load-balancer-controller"
+}
