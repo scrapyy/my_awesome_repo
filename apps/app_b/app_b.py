@@ -2,6 +2,9 @@ from flask import Flask, request
 import sqlite3 as sql
 application = Flask(__name__)
 
+@application.route('/hello')
+def hello():
+    return 'Hello there'
 
 @application.route('/auth', methods=['POST'])
 def auth():
