@@ -1,0 +1,59 @@
+# Default values for my_awesome_app.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+services:
+  app_a:
+    replicaCount: 1
+    port: 5000
+    entrypoint_args: "python3 /artifact/app_a.py"
+    liveness_path: /hello
+    readiness_path: /hello
+    env_vars:
+      - name: AUTH_SERVER
+        value: service-b
+    image:
+      repository: "scrapyy/app_a"
+      pullPolicy: Always
+      tag: "latest"
+    fullnameOverride: "service-a"
+    podAnnotations: {}
+    service:
+      type: ClusterIP
+      port: 80
+    resources: { }
+    autoscaling:
+      enabled: false
+      minReplicas: 1
+      maxReplicas: 100
+      targetCPUUtilizationPercentage: 80
+    nodeSelector: { }
+    tolerations: [ ]
+    affinity: { }
+    exposed: true
+    path: /*
+  app_b:
+    replicaCount: 1
+    env_vars:
+    entrypoint_args: "sqlite3 database.db < /artifact/schema.sql && python3 /artifact/app_b.py"
+    liveness_path: /hello
+    readiness_path: /hello
+    port: 5001
+    image:
+      repository: scrapyy/app_b
+      pullPolicy: Always
+      tag: "latest"
+    fullnameOverride: "service-b"
+    podAnnotations: {}
+    service:
+      type: ClusterIP
+      port: 5001
+    resources: { }
+    autoscaling:
+      enabled: false
+      minReplicas: 1
+      maxReplicas: 100
+      targetCPUUtilizationPercentage: 80
+    nodeSelector: { }
+    tolerations: [ ]
+    affinity: { }
+    exposed: false
