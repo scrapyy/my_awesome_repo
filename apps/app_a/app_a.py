@@ -1,5 +1,6 @@
 from flask import Flask, request
 import requests
+import os
 application = Flask(__name__)
 
 
@@ -12,7 +13,8 @@ def hello():
 def jobs():
     token = request.headers['Authorization']
     data = {"token": token}
-    result = requests.post('http://0.0.0.0:5001/auth', data=data).content
+    result = requests.post('http://' + os.environ['AUTH_SERVER'] + ':5001/auth', data=data).text
+    print(result)
     if result == "density":
         return 'Jobs:\nTitle: Devops\nDescription: Awesome\n'
     else:
