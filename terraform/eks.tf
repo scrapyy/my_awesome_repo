@@ -205,7 +205,7 @@ resource "aws_iam_role" "nodes" {
 
 # IAM policy attachment to nodegroup
 resource "aws_iam_role_policy_attachment" "nodes-AmazonEKSWorkerNodePolicy" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+  policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
   role       = aws_iam_role.nodes.name
 }
 
