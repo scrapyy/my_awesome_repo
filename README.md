@@ -8,8 +8,8 @@ My awesome codebase
 Requirements: docker
 
 How to:
-./build_push_image.sh "../apps/app_a" "$DOCKER_REPO" "DOCKER_TAG" true
-./build_push_image.sh "../apps/app_b" "$DOCKER_REPO" "DOCKER_TAG" true
+ - ./build_push_image.sh "../apps/app_a" "$DOCKER_REPO" "DOCKER_TAG" true
+ - ./build_push_image.sh "../apps/app_b" "$DOCKER_REPO" "DOCKER_TAG" true
 
 # Run apps in docker containers
 
