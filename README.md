@@ -26,6 +26,7 @@ Requirements:
  - terraform
  - github account, you must generate a token and put it in git_repo.tf
  - aws account, you must create an iam user and replace the access keys in eks.tf
+ - terraform cloud account, make sure you login from console
 
 How to:
 - terraform init
